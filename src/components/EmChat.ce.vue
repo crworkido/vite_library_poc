@@ -6,6 +6,8 @@ import type { Message }  from '../types/message'
 const isEmpty = (val:any) => {
   let _isEmpty = true
   const valType = typeof val || 'undefined'
+  if (Array.isArray(val)) return val.length === 0
+
   switch(valType) {
     case 'undefined':
       break
@@ -24,7 +26,7 @@ const isEmpty = (val:any) => {
  * defining component properties
  **/
 interface chatProps {
-  messages: string,
+  messages: Array<Message>,
   senderId: number,
 }
 const props = defineProps<chatProps>()
@@ -44,8 +46,9 @@ const actions = {
   submitMessage: () => {
     emit('send-message',{
       message: typedMessage.value,
-      createdAt: new Date('now'),
-      senderId: props.senderId})
+      createdAt: new Date(),
+      senderId: props.senderId
+    })
     typedMessage.value = ''
   },
   enterHandler() {
@@ -69,7 +72,7 @@ const messageList = computed( () => {
   //web components only receive string
   if(isEmpty(props.messages)) {
     return []
-  } else {
+  } else if ( typeof props.messages === 'string' ) {
     let rv = null
     try {
       rv = JSON.parse(props.messages)
@@ -78,6 +81,8 @@ const messageList = computed( () => {
       rv = []
     }
     return rv
+  } else {
+    return props.messages
   }
 } )
 </script>
@@ -98,13 +103,14 @@ const messageList = computed( () => {
     </div>
     <div class="controls">
       <div class="attach-button">
-        <a href="javascrip:;" @click="actions.attachHandler"><img src="/src//assets/clip.svg"/></a>
+        <a href="javascript:;" @click="actions.attachHandler"><img src="/src//assets/clip.svg"/></a>
       </div>
       <div class="input-field">
-        <textarea class="chat-input" v-model="typedMessage" @keyup.enter="actions.enterHandler"  />
+        <textarea class="chat-input" v-model="typedMessage"
+          nokeyup.enter="actions.enterHandler"  />
       </div>
       <div class="send-button">
-        <a href="javascrip:;" @click="actions.sendHandler"><img src="/src//assets/paper_plane.svg"/></a>
+        <a href="javascript:;" @click="actions.sendHandler"><img src="/src//assets/paper_plane.svg"/></a>
 
       </div>
     </div>

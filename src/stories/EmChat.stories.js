@@ -36,7 +36,7 @@ const Template = (args) => ({
   setup() {
     return {...args}
   },
-  template: '<em-chat :sender-id="senderId"  :messages="messages" @send-message="sendMessageHandler" />'
+  template: '<em-chat :sender-id="senderId"  :messages.prop="messages" @send-message="sendMessageHandler" />'
 })
 
 export const NoSettings = Template.bind({ })
@@ -47,10 +47,20 @@ ConversationWithReply.args = {
   "messages": JSON.stringify(allMessages())
 }
 
+const pingReply = () => sendMessageHandler(
+  { detail: [{ message: 'pong', createdAt: new Date(), senderId: 1 }]})
+const sendMessageHandler = (msg) => {
+  const msgPayload = msg.detail[0]
+  addMessageToStack(msgPayload)
+  if (msgPayload.message === 'ping') {
+    setTimeout(pingReply, 10000)
+  }
+
+}
 export const SendMessage = Template.bind({ })
-AttachButton.args = {
+SendMessage.args = {
   "senderId": 2,
-  "messages": null,
-  sendMessageHander
+  "messages": testMessages,
+  sendMessageHandler
 }
 
