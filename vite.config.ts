@@ -12,10 +12,10 @@ export default defineConfig({
   },
   plugins: [vue({
     customElement: true
-//    template: {
-//      compilerOptions: {
-//        isCustomeElement: (tag) => tag.includes('-')
-//      }
-//    }
+    template: {
+      compilerOptions: {
+        isCustomeElement: (tag) => tag.includes('-')
+      }
+    }
   })]
 })
